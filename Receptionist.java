@@ -1,7 +1,9 @@
 package FinalProject;
 import java.util.*;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,8 +20,6 @@ public class Receptionist{
         this.Firstname = Firstname;
         this.LastName = LastName;
     }
-
-    
 
     public static void ViewRecords() {
         Scanner sc = new Scanner(System.in);
@@ -52,8 +52,6 @@ public class Receptionist{
         MainCode.clearscreen();
     }
 
-    
-
     public static void SortingandFiltering() {
         Scanner sc = new Scanner(System.in);
         int sortChoice;
@@ -64,8 +62,9 @@ public class Receptionist{
             System.out.println("╠═══════════════════════════════════════════════════╣");
             System.out.println("║  1. Sort Date (Ascending)                         ║");
             System.out.println("║  2. Sort Date (Descending)                        ║");
-            System.out.println("║  3. Filter Payments (Highest to Lowest)           ║");
-            System.out.println("║  4. Back to Receptionist Menu                     ║");
+            System.out.println("║  3. Filter Fully Paid Reservations                ║");
+            System.out.println("║  4. Filter Reservations with Remaining Balance    ║");
+            System.out.println("║  5. Back to Receptionist Menu                     ║");
             System.out.println("╚═══════════════════════════════════════════════════╝");
             System.out.print("\nEnter your choice: ");
 
@@ -80,9 +79,12 @@ public class Receptionist{
                         sortByDateDescending();
                         break;
                     case 3:
-                        sortByPaymentDescending();
+                        filterByPaymentStatus(true);
                         break;
                     case 4:
+                        filterByPaymentStatus(false);
+                        break;
+                    case 5:
                         MainCode.clearscreen();
                         return;
                     default:
@@ -94,6 +96,34 @@ public class Receptionist{
                 sc.nextLine();
             }
         }
+    }
+
+    private static void filterByPaymentStatus(boolean fullyPaid) {
+        ArrayList<String> records = loadReservationFile();
+        if (records.isEmpty()) { noDataFoundMsg(); return; }
+
+        ArrayList<String> filtered = new ArrayList<>();
+        for (String record : records) {
+            double total = 0;
+            double paid = 0;
+            for (String line : record.split("\n")) {
+                if (line.startsWith("Total Reservation:")) {
+                    total = Double.parseDouble(line.replace("Total Reservation:", "").trim());
+                }
+                if (line.startsWith("Payment Made:")) {
+                    paid = Double.parseDouble(line.replace("Payment Made:", "").trim());
+                }
+            }
+
+            if (fullyPaid && paid >= total) {
+                filtered.add(record);
+            } else if (!fullyPaid && paid < total) {
+                filtered.add(record);
+            }
+        }
+
+        String title = fullyPaid ? "FULLY PAID RESERVATIONS" : "RESERVATIONS WITH REMAINING BALANCE";
+        displaySorted(filtered, title);
     }
 
     private static LocalDate extractDate(String record) {
@@ -135,7 +165,6 @@ public class Receptionist{
         ArrayList<String> records = loadReservationFile();
         if (records.isEmpty()) { noDataFoundMsg(); return; }
 
-        // Sort based on payment made (convert last found Payment Made: value)
         records.sort((r1, r2) -> {
             double pay1 = extractPayment(r1);
             double pay2 = extractPayment(r2);
@@ -197,15 +226,77 @@ public class Receptionist{
         System.out.println("\nNo reservation records found!\n");
     }
 
+    public static void CheckinGuest() {
+        Scanner sc = new Scanner(System.in);
+        MainCode.clearscreen();
+        System.out.println("╔════════════════════════════════════════════╗");
+        System.out.println("║           CHECK-IN GUEST PROCESS           ║");
+        System.out.println("╚════════════════════════════════════════════╝\n");
 
+        ArrayList<String> reservations = loadReservationFile();
+        if (reservations.isEmpty()) {
+            System.out.println("No reservations found.\nPress Enter to go back...");
+            sc.nextLine();
+            MainCode.clearscreen();
+            return;
+        }
 
+        System.out.print("Enter Client Login ID to check-in: ");
+        String input = sc.nextLine().trim();
+        boolean found = false;
 
+        for (int i = 0; i < reservations.size(); i++) {
+            String record = reservations.get(i);
+            String clientID = "";
 
+            for (String line : record.split("\n")) {
+                if (line.startsWith("ClientLoginID:")) {
+                    clientID = line.replace("ClientLoginID:", "").trim();
+                }
+            }
 
-    public static void CheckinGuest(){
+            if (input.equals(clientID)) {
+                found = true;
+                MainCode.clearscreen();
+                System.out.println("Reservation Found!\n");
+                System.out.println(record);
+                System.out.println("\nConfirm Check-In? (yes/no)");
+                String confirm = sc.nextLine();
 
+                if (confirm.equalsIgnoreCase("yes")) {
+                    // Save to CHECK-IN.txt
+                    try (BufferedWriter bw = new BufferedWriter(new FileWriter("CHECK-IN.txt", true))) {
+                        bw.write("ClientLoginID: " + clientID + " | Checked-in at: " + java.time.LocalDateTime.now());
+                        bw.newLine();
+                    } catch (IOException e) {
+                        System.out.println("Error saving check-in record: " + e.getMessage());
+                    }
 
+                    reservations.remove(i);
+                    try (BufferedWriter bw = new BufferedWriter(new FileWriter("RESERVE.txt"))) {
+                        for (String r : reservations) {
+                            bw.write(r);
+                            bw.newLine();
+                        }
+                    } catch (IOException e) {
+                        System.out.println("Error updating reservation file: " + e.getMessage());
+                    }
 
+                    System.out.println("\nGuest Checked-In Successfully!");
+                } else {
+                    System.out.println("\nCheck-In Cancelled.");
+                }
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("\nReservation not found. Please check the input.");
+        }
+
+        System.out.println("\nPress Enter to return to the menu...");
+        sc.nextLine();
+        MainCode.clearscreen();
     }
 
     public static void Receptionist(String[] args) {
@@ -301,7 +392,7 @@ public class Receptionist{
 
         while(!menuchecker){
                 System.out.println("╔══════════════════════════════════════════════════╗");
-                System.out.println("║                 RECEPTIONIST MENU                ║");
+                System.out.println("║                RECEPTIONIST MENU                 ║");
                 System.out.println("╠══════════════════════════════════════════════════╣");
                 System.out.println("║  1. View Records                                 ║");
                 System.out.println("║  2. Sort Reservation & Filtering                 ║");
@@ -317,8 +408,7 @@ public class Receptionist{
                     case 1: ViewRecords();
                     break;
 
-                    case 2: MainCode.clearscreen();
-                    SortingandFiltering();
+                    case 2:SortingandFiltering();
                     break;
 
                     case 3: CheckinGuest();
