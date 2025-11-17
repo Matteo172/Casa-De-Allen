@@ -9,7 +9,7 @@ public class MainCode {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
-
+    static Scanner scanner = new Scanner(System.in);
     public static void loadingscreen(){
         System.out.println("                     ");
         System.out.println("|   _  _  _|. _  _  ");
@@ -197,7 +197,7 @@ public class MainCode {
     }
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        
         boolean checker = false;
         
         clearscreen();
@@ -236,7 +236,11 @@ public class MainCode {
             int choice = scanner.nextInt();
             
                 switch(choice){
-                    case 1: Client.Client(args);
+                    case 1: 
+                        ClientLogin currentClient = ClientLogin.ClientLogin(args);
+                    if(currentClient != null){
+                        return;
+                    }
                     break;
                     case 2: Receptionist.Receptionist(args);
                     break;
