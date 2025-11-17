@@ -3,7 +3,7 @@ import java.util.*;
 import java.io.*;
 
 public class ClientReservation {
-    Scanner sc = new Scanner(System.in);
+    static Scanner sc = new Scanner(System.in);
 
     //ArrayLists
     ArrayList<String> ReservationDate = new ArrayList<>();
@@ -45,11 +45,11 @@ public class ClientReservation {
     //doubles
     Double lunch = 250.00;
     Double dinner = 350.00;
-    Double payment = 0.00;
+    static Double payment = 0.00;
     Double kulang;
     Double change = 0.0;
     Double partialFee;
-    Double totalReservation = 0.00;
+    static Double totalReservation = 0.00;
         
     //char
     char lunchdinner;
@@ -329,12 +329,29 @@ public class ClientReservation {
     }
 }
 
+    public static void getBalance() {
+        System.out.println("Guest Name: " );
+        Double Balance = totalReservation - payment;
+        if (Balance > 0) {
+        System.out.println("Your remaining balance is: Php " + Balance);
+        } else if (Balance < 0) {
+            System.out.println("You have overpaid. Your change is: Php " + Math.abs(Balance));
+        } else {
+            System.out.println("Your payment is complete. No remaining balance.");
+        }
+            System.out.println("\nType anything to go back to Client Menu");
+            String choice = sc.next();
+            MainCode.clearscreen();
+        
+    }
+
     public void saveToFile() {
         clientID = (int)(Math.random()*90000)+10000;
 
         try (BufferedWriter reserveWriter = new BufferedWriter(new FileWriter(reservFile,true))){
+            reserveWriter.write("ClientID: " + clientID);
             reserveWriter.newLine();
-            reserveWriter.write("ClientLoginID: " + clientID);
+            reserveWriter.write("Client Name: ");
             reserveWriter.newLine();
             reserveWriter.write("Date: " + reserveDate);
             reserveWriter.newLine();
@@ -365,12 +382,16 @@ public class ClientReservation {
         getPayment();
         getcreateFile(reservFile);
         saveToFile();
+        System.out.println("\nType anything to go back to Client Menu");
+            String choice = sc.next();
+            MainCode.clearscreen();
     }
 
     public static void ClientReservation(String[] args) {
-        Scanner sc = new Scanner(System.in);
         ClientReservation reservation = new ClientReservation();
         boolean loop2 = false;
+
+        MainCode.welcomeclient();
 
         while(!loop2){
             System.out.println("\n╔══════════════════════════════════════════════════╗");
@@ -390,7 +411,9 @@ public class ClientReservation {
                     reservation.getReservation();
                     break;
 
-                    case 2:
+                    case 2: MainCode.loadingscreen2();
+                    MainCode.clearscreen();
+                    getBalance();
                     break;
 
                     case 3:
