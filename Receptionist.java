@@ -2,6 +2,7 @@ package FinalProject;
 import java.util.*;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -233,29 +234,39 @@ public class Receptionist{
         System.out.println("║           CHECK-IN GUEST PROCESS           ║");
         System.out.println("╚════════════════════════════════════════════╝\n");
 
-        ArrayList<String> reservations = loadReservationFile();
-        if (reservations.isEmpty()) {
+        File reserveFile = new File("RESERVE.txt");
+        ArrayList<String> allRecords = new ArrayList<>();
+        boolean found = false;
+
+        try (Scanner fileScanner = new Scanner(reserveFile)) {
+            StringBuilder record = new StringBuilder();
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine();
+                record.append(line).append("\n");
+
+                if (line.equals("--------------------------------------------------")) {
+                    allRecords.add(record.toString());
+                    record = new StringBuilder();
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading RESERVE.txt: " + e.getMessage());
+        }
+
+        if (allRecords.isEmpty()) {
             System.out.println("No reservations found.\nPress Enter to go back...");
             sc.nextLine();
             MainCode.clearscreen();
             return;
         }
 
-        System.out.print("Enter Client Login ID to check-in: ");
+        System.out.print("Enter Client ID to check-in: ");
         String input = sc.nextLine().trim();
-        boolean found = false;
 
-        for (int i = 0; i < reservations.size(); i++) {
-            String record = reservations.get(i);
-            String clientID = "";
+        ArrayList<String> updatedRecords = new ArrayList<>();
 
-            for (String line : record.split("\n")) {
-                if (line.startsWith("ClientLoginID:")) {
-                    clientID = line.replace("ClientLoginID:", "").trim();
-                }
-            }
-
-            if (input.equals(clientID)) {
+        for (String record : allRecords) {
+            if (record.contains("ClientID: " + input)) {
                 found = true;
                 MainCode.clearscreen();
                 System.out.println("Reservation Found!\n");
@@ -264,30 +275,28 @@ public class Receptionist{
                 String confirm = sc.nextLine();
 
                 if (confirm.equalsIgnoreCase("yes")) {
-                    // Save to CHECK-IN.txt
                     try (BufferedWriter bw = new BufferedWriter(new FileWriter("CHECK-IN.txt", true))) {
-                        bw.write("ClientLoginID: " + clientID + " | Checked-in at: " + java.time.LocalDateTime.now());
+                        bw.write("ClientID: " + input + " | Checked-in at: " + java.time.LocalDateTime.now());
                         bw.newLine();
                     } catch (IOException e) {
                         System.out.println("Error saving check-in record: " + e.getMessage());
                     }
 
-                    reservations.remove(i);
-                    try (BufferedWriter bw = new BufferedWriter(new FileWriter("RESERVE.txt"))) {
-                        for (String r : reservations) {
-                            bw.write(r);
-                            bw.newLine();
-                        }
-                    } catch (IOException e) {
-                        System.out.println("Error updating reservation file: " + e.getMessage());
-                    }
-
                     System.out.println("\nGuest Checked-In Successfully!");
                 } else {
                     System.out.println("\nCheck-In Cancelled.");
+                    updatedRecords.add(record);
                 }
-                break;
+            } else {
+                updatedRecords.add(record);
             }
+        }
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("RESERVE.txt"))) {
+            for (String rec : updatedRecords) {
+                bw.write(rec);
+            }
+        } catch (IOException e) {
+            System.out.println("Error updating RESERVE.txt: " + e.getMessage());
         }
 
         if (!found) {
