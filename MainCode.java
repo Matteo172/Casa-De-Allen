@@ -186,14 +186,14 @@ public class MainCode {
 
     }
 
-    public static void welcomeuser(){
+    public static void welcomeclient(){
 
-        System.out.println("                                                                                ");
-        System.out.println("                                                                                      ▄▄ ");
-        System.out.println("          ██     ██ ▄▄▄▄▄ ▄▄     ▄▄▄▄  ▄▄▄  ▄▄   ▄▄ ▄▄▄▄▄   ██  ██  ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄   ██ ");
-        System.out.println("          ██ ▄█▄ ██ ██▄▄  ██    ██▀▀▀ ██▀██ ██▀▄▀██ ██▄▄    ██  ██ ███▄▄ ██▄▄  ██▄█▄  ██ ");
-        System.out.println("           ▀██▀██▀  ██▄▄▄ ██▄▄▄ ▀████ ▀███▀ ██   ██ ██▄▄▄   ▀████▀ ▄▄██▀ ██▄▄▄ ██ ██  ▄▄ ");
-        System.out.println("                                                                                ");
+        System.out.println("                                                                                                    ");
+        System.out.println("                                                                                                 ▄▄ ");
+        System.out.println("          ██     ██ ▄▄▄▄▄ ▄▄     ▄▄▄▄  ▄▄▄  ▄▄   ▄▄ ▄▄▄▄▄   ▄█████ ▄▄    ▄▄ ▄▄▄▄▄ ▄▄  ▄▄ ▄▄▄▄▄▄  ██ ");
+        System.out.println("          ██ ▄█▄ ██ ██▄▄  ██    ██▀▀▀ ██▀██ ██▀▄▀██ ██▄▄    ██     ██    ██ ██▄▄  ███▄██   ██    ██ ");
+        System.out.println("           ▀██▀██▀  ██▄▄▄ ██▄▄▄ ▀████ ▀███▀ ██   ██ ██▄▄▄   ▀█████ ██▄▄▄ ██ ██▄▄▄ ██ ▀██   ██    ▄▄ ");
+        System.out.println("                                                                                                     ");
     }
 
     public static void main(String[] args) {
@@ -219,7 +219,6 @@ public class MainCode {
         System.out.println("               ░██████   ░█████░██  ░███████   ░█████░██    ░███████    ░███████     ░██    ░██ ░██ ░██  ░███████  ░██    ░██ ");
         System.out.println("                                                                                                                              ");
         System.out.println("                                                                                                                              ");
-
         
         while(!checker){
             System.out.println("╔══════════════════════════════════════════════════╗");
@@ -242,7 +241,8 @@ public class MainCode {
                         return;
                     }
                     break;
-                    case 2: Receptionist.Receptionist(args);
+                    case 2: MainCode.clearscreen();
+                    Receptionist.Receptionist(args);
                     break;
                     case 3: Manager.Manager(args);
                     break;
