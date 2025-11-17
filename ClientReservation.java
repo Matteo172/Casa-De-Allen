@@ -40,12 +40,14 @@ public class ClientReservation {
     int lunchQuantity = 0;
     int lunchTotal = 0;
     int totalmealPrice = 0;
+    int clientID;
     
     //doubles
     Double lunch = 250.00;
     Double dinner = 350.00;
     Double payment = 0.00;
     Double kulang;
+    Double change = 0.0;
     Double partialFee;
     Double totalReservation = 0.00;
         
@@ -57,6 +59,11 @@ public class ClientReservation {
 
     public ClientReservation(){
         
+    }
+
+    public static void clearscreen(){
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
 
     public boolean isLeapYear (int year){
@@ -88,7 +95,9 @@ public class ClientReservation {
 
 
        public void getReservationDate() {
-            System.out.println("Reservation Date");
+            System.out.println("██▄  ██████ ▄█████ ██████ █████▄  ██  ██ ▄████▄ ██████ ██ ▄████▄ ███  ██");
+            System.out.println("██▄▄██▄ ██▄▄   ▀▀▀▄▄▄ ██▄▄   ██▄▄██▄ ██▄▄██ ██▄▄██   ██   ██ ██  ██ ██ ▀▄██");
+            System.out.println("██   ██ ██▄▄▄▄ █████▀ ██▄▄▄▄ ██   ██  ▀██▀  ██  ██   ██   ██ ▀████▀ ██   ██\n");
             while (true) {
                 try {
                     System.out.print("Please select a month (1 = January - 12 = December): ");
@@ -102,7 +111,8 @@ public class ClientReservation {
                     sc.nextLine();
                 }
             }
-    
+            
+            System.out.println();
             System.out.print("Please select year (ex: 2025): ");
             year = sc.nextInt();
     
@@ -121,12 +131,14 @@ public class ClientReservation {
                 }
             }
     
+            System.out.println();
             reserveDate = monthNames[month - 1] + " " + day + ", " + year;
             System.out.println("You selected: " + reserveDate);
             ReservationDate.add(reserveDate);
         }
 
     public void getFacility() {
+        clearscreen();
         System.out.println("\nFacility Options:");
         System.out.println("    Facility        Price Per Unit     Maximum # of Pax");
         System.out.println("-----------------------------------------------------------");
@@ -134,7 +146,6 @@ public class ClientReservation {
             System.out.printf("%-3d %-17s %-23.2f %d%n", i + 1, facility[i], pricePerUnit[i], pax[i]);
         }
 
-        
         while (true) {
             try {
                 System.out.print("Choose facility type: ");
@@ -153,7 +164,7 @@ public class ClientReservation {
         reserveFacility = facility[i];
         Facilitytype.add(reserveFacility);
 
-
+        System.out.println();
         while (true) {
             try {
                 System.out.print("Number of guest (REMEMBER: There is an additional Php500.00 for every extra person for room accommodation): " );
@@ -191,6 +202,7 @@ public class ClientReservation {
     }
 
     public void getMeals() {
+        clearscreen();
         System.out.println("    Breakfast        Lunch         Dinner");
         System.out.println("----------------------------------------------");
         System.out.printf("%10s %15.2f %13.2f%n", breakfast, lunch, dinner);
@@ -200,31 +212,34 @@ public class ClientReservation {
                 System.out.print("Would like to avail Lunch and Dinner? (Y/N) ");
                 lunchdinner = sc.next().toUpperCase().charAt(0);
 
-                if(lunchdinner == 'Y'){
+                if (lunchdinner == 'Y') {
                     do {
-                        System.out.println("Select 1 to input Lunch quantity");
-                        System.out.println("Select 2 to input Dinner quantity");
+                        System.out.println("\nSelect 0 to view Total");
+                        System.out.print("Provide Meal Lunch Quantity: ");
+                        lunchQuantity = sc.nextInt();
+
+                        System.out.print("Provide Dinner Quantity: ");
+                        dinnerQuantity = sc.nextInt();
+
+                        lunchTotal = lunchQuantity * 250;
+                        dinnerTotal = dinnerQuantity * 250;
+
+                        System.out.println("\nSelect 1 to re-enter Lunch quantity");
+                        System.out.println("Select 2 to re-enter Dinner quantity");
                         System.out.println("Select 0 to view Total");
                         foodchoice = sc.nextInt();
-                    switch (foodchoice) {
-                        case 1:
-                            System.out.print("Meal Lunch Quantity: "); 
+
+                        if (foodchoice == 1) {
+                            System.out.print("Meal Lunch Quantity: ");
                             lunchQuantity = sc.nextInt();
                             lunchTotal = lunchQuantity * 250;
-                            break;
-
-                        case 2: 
-                            System.out.print("Meal Dinner Quantity: "); 
+                        } else if (foodchoice == 2) {
+                            System.out.print("Meal Dinner Quantity: ");
                             dinnerQuantity = sc.nextInt();
                             dinnerTotal = dinnerQuantity * 250;
-                            break;
-                        
-                        default:
-                            System.out.println("Invalid choice. Please select 1, 2, or 0.");
-                            break;
-                    }
+                        }
+
                     } while (foodchoice != 0);
-                
                 } else if (lunchdinner == 'N') {
                     lunchTotal = 0;
                     dinnerTotal = 0;
@@ -232,9 +247,9 @@ public class ClientReservation {
                     System.out.println("Invalid input. Please enter Y or N.");
                     continue;
                 }
-            
                 totalmealPrice = lunchTotal + dinnerTotal;
                 break;
+
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input. Please enter a valid character.");
                 sc.nextLine();
@@ -243,69 +258,84 @@ public class ClientReservation {
     }
     
     public void getPayment() {
-        System.out.println("\nReservation Summary:");
-        System.out.println("----------------------------");
-        System.out.println("Reservation Date: " + ReservationDate.get(0));
-        System.out.println("Facility Type: " + Facilitytype.get(0));
-        System.out.println("Number of Guests: " + NumberofGuest.get(0));
+    System.out.println("\nReservation Summary:");
+    System.out.println("----------------------------");
+    System.out.println("Reservation Date: " + ReservationDate.get(0));
+    System.out.println("Facility Type: " + Facilitytype.get(0));
+    System.out.println("Number of Guests: " + NumberofGuest.get(0));
 
-        if (additionalFee > 0) {
-            System.out.println("Additional Fee for Extra Pax: Php " + additionalFee);
-        } else {
-            System.out.println("No Additional Fee for Extra Pax.");
-        }
-
-        System.out.println("Total Meal Price: Php " + totalmealPrice);
-        System.out.println("------------------------------------------------------------");
-        System.out.println("Total Cost for Reservation: Php " + (pricePerUnit[i] * NumberofFacilitytoReserve.get(0) + additionalFee + totalmealPrice));
-        System.out.println("------------------------------------------------------------");
-        System.out.println("Thank you for your reservation! We look forward to serving you.");
-
-        System.out.println("You have the option to pay 30% reservation fee or pay the full amount.");
-        totalReservation = (pricePerUnit[i] * NumberofFacilitytoReserve.get(0) + additionalFee + totalmealPrice);
-        Double totalReservation = (pricePerUnit[i] * NumberofFacilitytoReserve.get(0) + additionalFee + totalmealPrice);
-
-        System.out.println("Total Reservation Amount: " + totalReservation);
-            while (true) {
-                try {
-                    System.out.print("Would you be able to pay for everything now? (Y/N): ");
-                    fullpayment = sc.next().toUpperCase().charAt(0);
-
-                    if (fullpayment == 'Y') {
-                        System.out.println("Total Reservation Amount: " + totalReservation);
-                        System.out.print("Input your payment: P");
-                        payment = sc.nextDouble();
-
-                        while (payment < totalReservation) {
-                            kulang = totalReservation - payment;
-                            System.out.println("Insufficient payment (Php " + kulang + ")");
-                            System.out.print("Input your reservation payment: Php");
-                            payment += sc.nextDouble();
-                        }
-                    } else if (fullpayment == 'N') {
-                        partialFee = totalReservation * 0.30;
-                        System.out.println("30% Reservation fee: Php " + partialFee);
-                        System.out.print("Input your reservation payment: P");
-                        payment = sc.nextDouble();
-
-                        while (payment < partialFee) {
-                            kulang = partialFee - payment;
-                            System.out.println("Insufficient payment (Php " + kulang + ")");
-                            System.out.print("Input your payment: Php");
-                            payment += sc.nextDouble();
-                        }
-                        continue;
-                    }
-                    break;
-                } catch (InputMismatchException e) {
-                    System.out.println("Invalid input. Please enter a valid character or number.");
-                    sc.nextLine();
-            } 
-        }
+    if (additionalFee > 0) {
+        System.out.println("Additional Fee for Extra Pax: Php " + additionalFee);
+    } else {
+        System.out.println("No Additional Fee for Extra Pax.");
     }
 
+    System.out.println("Total Meal Price: Php " + totalmealPrice);
+    System.out.println("------------------------------------------------------------");
+    System.out.println("Total Cost for Reservation: Php " + (pricePerUnit[i] * NumberofFacilitytoReserve.get(0) + additionalFee + totalmealPrice));
+    System.out.println("------------------------------------------------------------");
+    System.out.println("Thank you for your reservation! We look forward to serving you.");
+
+    System.out.println("You have the option to pay 30% reservation fee or pay the full amount.");
+    System.out.println();
+
+    totalReservation = (pricePerUnit[i] * NumberofFacilitytoReserve.get(0) + additionalFee + totalmealPrice);
+
+    System.out.println("Total Reservation Amount: " + totalReservation);
+
+    while (true) {
+        try {
+            System.out.print("Would you be able to pay for everything now? (Y/N): ");
+            fullpayment = sc.next().toUpperCase().charAt(0);
+
+            if (fullpayment == 'Y') {
+                // FULL PAYMENT
+                System.out.println("Total Reservation Amount: " + totalReservation);
+                System.out.print("Input your payment: P");
+                payment = sc.nextDouble();
+
+                while (payment < totalReservation) {
+                    kulang = totalReservation - payment;
+                    System.out.println("Insufficient payment (Php " + kulang + ")");
+                    System.out.print("Input your reservation payment: Php");
+                    payment += sc.nextDouble();
+                }
+
+                if (payment > totalReservation) {
+                    change = payment - totalReservation;
+                    System.out.println("Your change is: " + change);
+                }
+
+                if (change == 0.00) {
+                    System.out.println("No change.");
+                } 
+
+            } else if (fullpayment == 'N') {
+                partialFee = totalReservation * 0.30;
+                System.out.println("30% Reservation fee: Php " + partialFee);
+                System.out.print("Input your reservation payment: P");
+                payment = sc.nextDouble();
+                break;
+
+            } else {
+                System.out.println("Invalid input. Please enter Y or N.");
+                continue;
+            }   
+            break;
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter a valid character or number.");
+            sc.nextLine();
+        }
+    }
+}
+
     public void saveToFile() {
-        try (BufferedWriter reserveWriter = new BufferedWriter(new FileWriter(reservFile, true))) {
+        clientID = (int)(Math.random()*90000)+10000;
+
+        try (BufferedWriter reserveWriter = new BufferedWriter(new FileWriter(reservFile,true))){
+            reserveWriter.newLine();
+            reserveWriter.write("ClientLoginID: " + clientID);
+            reserveWriter.newLine();
             reserveWriter.write("Date: " + reserveDate);
             reserveWriter.newLine();
             reserveWriter.write("Facility: " + reserveFacility);
@@ -314,18 +344,18 @@ public class ClientReservation {
             reserveWriter.newLine();
             reserveWriter.write("Additional Fee: " + additionalFee);
             reserveWriter.newLine();
-            reserveWriter.write("Meals Total: " + (totalmealPrice));
+            reserveWriter.write("Meals Total: " + totalmealPrice);
             reserveWriter.newLine();
-            reserveWriter.write("Total Reservation: " + String.valueOf(totalReservation));
+            reserveWriter.write("Total Reservation: " + totalReservation);
             reserveWriter.newLine();
             reserveWriter.write("Payment Made: " + payment);
             reserveWriter.newLine();
-            reserveWriter.write("--------------------------------------------------\n");
+            reserveWriter.write("Change: " + change);
             reserveWriter.newLine();
-        } catch (IOException e) {
-            System.out.println("Failed to write to the file.");
-            e.printStackTrace();
-        }
+            reserveWriter.write("--------------------------------------------------\n"); reserveWriter.newLine();
+
+            System.out.println("\nYour reservation has been saved! Your Client Login ID is: " + clientID);
+        } catch(IOException e){ e.printStackTrace(); }
     }
 
     public void getReservation(){
@@ -338,8 +368,63 @@ public class ClientReservation {
     }
 
     public static void ClientReservation(String[] args) {
+        Scanner sc = new Scanner(System.in);
         ClientReservation reservation = new ClientReservation();
-        reservation.getReservation();
-    }
+        boolean loop2 = false;
 
+        while(!loop2){
+            System.out.println("\n╔══════════════════════════════════════════════════╗");
+            System.out.println("║                   CLIENT MENU                    ║");
+            System.out.println("╠══════════════════════════════════════════════════╣");
+            System.out.println("║   1. Reservation                                 ║");
+            System.out.println("║   2. Balance                                     ║");
+            System.out.println("║   3. Log out                                     ║");
+            System.out.println("╚══════════════════════════════════════════════════╝\n");
+            System.out.print("Enter your choice: ");
+            int choice = sc.nextInt();
+
+            try{
+                switch(choice){
+                    case 1: MainCode.loadingscreen2();
+                    MainCode.clearscreen();
+                    reservation.getReservation();
+                    break;
+
+                    case 2:
+                    break;
+
+                    case 3:
+                    MainCode.clearscreen();
+                    System.out.println("╔══════════════════════════════════════════════════╗");
+                    System.out.println("║               ACTION CONFIRMATION                ║");
+                    System.out.println("╠══════════════════════════════════════════════════╣");
+                    System.out.println("║  You selected: LOG-OUT                           ║");
+                    System.out.println("║  Are you sure you want to log out?               ║");
+                    System.out.println("║                                                  ║");
+                    System.out.println("║  1. Yes, log out                                 ║");
+                    System.out.println("║  2. No, go back                                  ║");
+                    System.out.println("╚══════════════════════════════════════════════════╝\n");
+                    System.out.print("Enter your choice: ");
+                    String logoutchoice = sc.next();
+                    if(logoutchoice.equalsIgnoreCase("yes")){
+                        MainCode.clearscreen();
+                        MainCode.lougoutscreen();
+                        MainCode.main(args);
+                    }else if(logoutchoice.equalsIgnoreCase("no")){
+                        loop2 = false;
+                        MainCode.clearscreen();
+                    }
+                    break;
+                    
+                    default: System.out.println("Invalid Choice. Please Try again");
+                }
+            }catch(InputMismatchException e){
+                System.out.print("Invalid Input. Please Enter a number");
+                System.out.println("Type Anything to continue.");
+                sc.nextLine();
+                sc.next();
+                MainCode.clearscreen();
+            }
+        }
+    }
 }
