@@ -1,7 +1,12 @@
 package FinalProject;
 import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class Receptionist{
     static int RecepID;
@@ -14,16 +19,188 @@ public class Receptionist{
         this.LastName = LastName;
     }
 
-    public static void ViewRecords(){
+    
 
+    public static void ViewRecords() {
+        Scanner sc = new Scanner(System.in);
+        String fileName = "RESERVE.txt";
 
+        MainCode.clearscreen();
+        System.out.println("╔════════════════════════════════════════════╗");
+        System.out.println("║          VIEW RESERVATION RECORDS          ║");
+        System.out.println("╚════════════════════════════════════════════╝\n");
 
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            boolean found = false;
+
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+                found = true;
+            }
+
+            if (!found) {
+                System.out.println("No reservation records found.\n");
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error: Reservation file not found or cannot be opened.\n");
+        }
+
+        System.out.println("\nPress Enter to go back...");
+        sc.nextLine();
+        MainCode.clearscreen();
     }
 
-    public static void SortingandFiltering(){
+    
 
+    public static void SortingandFiltering() {
+        Scanner sc = new Scanner(System.in);
+        int sortChoice;
 
+        while (true) {
+            System.out.println("\n╔═══════════════════════════════════════════════════╗");
+            System.out.println("║            SORTING & FILTERING OPTIONS            ║");
+            System.out.println("╠═══════════════════════════════════════════════════╣");
+            System.out.println("║  1. Sort Date (Ascending)                         ║");
+            System.out.println("║  2. Sort Date (Descending)                        ║");
+            System.out.println("║  3. Filter Payments (Highest to Lowest)           ║");
+            System.out.println("║  4. Back to Receptionist Menu                     ║");
+            System.out.println("╚═══════════════════════════════════════════════════╝");
+            System.out.print("\nEnter your choice: ");
+
+            try {
+                sortChoice = sc.nextInt();
+
+                switch (sortChoice) {
+                    case 1:
+                        sortByDateAscending();
+                        break;
+                    case 2:
+                        sortByDateDescending();
+                        break;
+                    case 3:
+                        sortByPaymentDescending();
+                        break;
+                    case 4:
+                        MainCode.clearscreen();
+                        return;
+                    default:
+                        System.out.println("Invalid choice, please try again.\n");
+                }
+
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input, numbers only.");
+                sc.nextLine();
+            }
+        }
     }
+
+    private static LocalDate extractDate(String record) {
+        for (String line : record.split("\n")) {
+            if (line.startsWith("Date:")) {
+                String dateStr = line.replace("Date:", "").trim();
+                try {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.ENGLISH);
+                    return LocalDate.parse(dateStr, formatter);
+                } catch (DateTimeParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return LocalDate.MIN;
+    }
+
+    private static void sortByDateAscending() {
+        ArrayList<String> records = loadReservationFile();
+        if (records.isEmpty()) { 
+            noDataFoundMsg(); 
+            return; 
+        }
+        records.sort(Comparator.comparing(Receptionist::extractDate));
+
+        displaySorted(records, "SORTED BY DATE (ASCENDING)");
+    }
+
+    private static void sortByDateDescending() {
+        ArrayList<String> records = loadReservationFile();
+        if (records.isEmpty()) { noDataFoundMsg(); return; }
+
+        records.sort(Comparator.comparing(Receptionist::extractDate).reversed());
+
+        displaySorted(records, "SORTED BY DATE (DESCENDING)");
+    }
+
+    private static void sortByPaymentDescending() {
+        ArrayList<String> records = loadReservationFile();
+        if (records.isEmpty()) { noDataFoundMsg(); return; }
+
+        // Sort based on payment made (convert last found Payment Made: value)
+        records.sort((r1, r2) -> {
+            double pay1 = extractPayment(r1);
+            double pay2 = extractPayment(r2);
+            return Double.compare(pay2, pay1);
+        });
+
+        displaySorted(records, "FILTERED BY HIGHEST PAYMENT");
+    }
+
+    private static double extractPayment(String record) {
+        for (String line : record.split("\n")) {
+            if (line.startsWith("Payment Made:")) {
+                return Double.parseDouble(line.replace("Payment Made:", "").trim());
+            }
+        }
+        return 0.0;
+    }
+
+    private static ArrayList<String> loadReservationFile() {
+        ArrayList<String> list = new ArrayList<>();
+        String fileName = "RESERVE.txt";
+
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line, block = "";
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("Date:")) {
+                    if (!block.isEmpty()) list.add(block);
+                    block = line + "\n";
+                } else {
+                    block += line + "\n";
+                }
+            }
+            if (!block.isEmpty()) list.add(block);
+
+        } catch (IOException e) {
+            System.out.println("Error! Cannot read RESERVE.txt");
+        }
+
+        return list;
+    }
+
+    private static void displaySorted(ArrayList<String> sortedList, String title) {
+        Scanner sc = new Scanner(System.in);
+        MainCode.clearscreen();
+
+        System.out.println("\n====== " + title + " ======\n");
+
+        for (String block : sortedList) {
+            System.out.println(block);
+            System.out.println("--------------------------------------------------");
+        }
+
+        System.out.println("\nPress Enter to continue...");
+        sc.nextLine();
+        MainCode.clearscreen();
+    }
+
+    private static void noDataFoundMsg() {
+        System.out.println("\nNo reservation records found!\n");
+    }
+
+
+
+
+
 
     public static void CheckinGuest(){
 
@@ -140,7 +317,8 @@ public class Receptionist{
                     case 1: ViewRecords();
                     break;
 
-                    case 2: SortingandFiltering();
+                    case 2: MainCode.clearscreen();
+                    SortingandFiltering();
                     break;
 
                     case 3: CheckinGuest();
