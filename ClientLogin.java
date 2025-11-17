@@ -13,7 +13,7 @@ import java.util.regex.*;
 
 public class ClientLogin {
 
-    private String fullName;
+    String fullName;
     private String address;
     private String contactInfo;
     private String email;
@@ -83,27 +83,6 @@ public class ClientLogin {
         return sum;
     }
 
-    // public static LinkedList<ClientLogin> loadClientLoginsFromFile() {
-    // LinkedList<ClientLogin> ClientLoginList = new LinkedList<>();
-    // try (BufferedReader br = new BufferedReader(new FileReader("ClientLogin.txt"))) {
-    // String line;
-    // while ((line = br.readLine()) != null) {
-    // String[] parts = line.split(",");
-    // if (parts.length >= 3) {
-    // String fullName = parts[0];
-    // int ClientLoginID = Integer.parseInt(parts[1]);
-    // String email = parts[2];
-    // ClientLogin c = new ClientLogin(fullName, "", "", email);
-    // c.ClientLoginID = ClientLoginID;
-    // ClientLoginList.add(c);
-    // }
-    // }
-    // } catch (IOException e) {
-    // System.out.println("No ClientLogins found or failed to read ClientLogin.txt");
-    // }
-    // return ClientLoginList;
-    // }
-
     public static LinkedList<ClientLogin> loadClientLoginsFromFile() {
         LinkedList<ClientLogin> ClientLoginList = new LinkedList<>();
 
@@ -163,7 +142,7 @@ public class ClientLogin {
         while (true) {
             MainCode.clearscreen();
             System.out.println("╔══════════════════════════════════════════════════╗");
-            System.out.println("║              ClientLogin ACTION MENU             ║");
+            System.out.println("║             Client Login ACTION MENU             ║");
             System.out.println("╠══════════════════════════════════════════════════╣");
             System.out.println("║  1. Already have an account - Log in             ║");
             System.out.println("║  2. Register a new account                       ║");
@@ -200,29 +179,29 @@ public class ClientLogin {
                 case "2":
 
                     MainCode.clearscreen();
-                    System.out.print("ClientLogin Full Name (ex.: Paul Harris B. Bathan): \n");
+                    System.out.print("Client Login Full Name (ex.: John D. Doe): \n");
                     fullName = sc.nextLine();
 
-                    System.out.print("ClientLogin Address (ex.: Mataas na Lupa, Lipa City, Batangas): \n");
+                    System.out.print("\nClient Login Address (ex.: Mataas na Lupa, Lipa City, Batangas): \n");
                     address = sc.nextLine();
 
                     while (true) {
-                        System.out.print("ClientLogin Contact Information (ex.: 09123456789): \n");
+                        System.out.print("\nClient Login Contact Information (ex.: 09123456789): \n");
                         contactInfo = sc.nextLine();
                         isValid = continfoValidation(contactInfo);
                         if (!isValid) {
-                            System.out.println("Invalid Contact Information. Please try again. \n");
+                            System.out.println("\nInvalid Contact Information. Please try again. \n");
                         } else {
                             break;
                         }
                     }
 
                     while (true) {
-                        System.out.print("ClientLogin Email Address (ex.: john.doe@example.com): \n");
+                        System.out.print("\nClient Login Email Address (ex.: john.doe@example.com): \n");
                         email = sc.nextLine();
                         isValid = emailValidation(email);
                         if (!isValid) {
-                            System.out.println("Invalid Email Address. Please try again. \n");
+                            System.out.println("\nInvalid Email Address. Please try again. \n");
                         } else {
                             break;
                         }
