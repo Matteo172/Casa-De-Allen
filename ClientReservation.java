@@ -42,7 +42,7 @@ public class ClientReservation {
     int totalmealPrice = 0;
     int clientID;
     
-    //doubles
+    //doublesf
     Double lunch = 250.00;
     Double dinner = 350.00;
     static Double payment = 0.00;
@@ -95,9 +95,11 @@ public class ClientReservation {
 
 
        public void getReservationDate() {
-            System.out.println("██▄  ██████ ▄█████ ██████ █████▄  ██  ██ ▄████▄ ██████ ██ ▄████▄ ███  ██");
+            System.out.println();
+            System.out.println("█████▄  ██████ ▄█████ ██████ █████▄  ██  ██ ▄████▄ ██████ ██ ▄████▄ ███  ██");
             System.out.println("██▄▄██▄ ██▄▄   ▀▀▀▄▄▄ ██▄▄   ██▄▄██▄ ██▄▄██ ██▄▄██   ██   ██ ██  ██ ██ ▀▄██");
-            System.out.println("██   ██ ██▄▄▄▄ █████▀ ██▄▄▄▄ ██   ██  ▀██▀  ██  ██   ██   ██ ▀████▀ ██   ██\n");
+            System.out.println("██   ██ ██▄▄▄▄ █████▀ ██▄▄▄▄ ██   ██  ▀██▀  ██  ██   ██   ██ ▀████▀ ██   ██");
+            System.out.println();
             while (true) {
                 try {
                     System.out.print("Please select a month (1 = January - 12 = December): ");
@@ -118,7 +120,8 @@ public class ClientReservation {
     
             monthDays = getDaysInMonth(month, year);
             System.out.println(monthNames[month - 1] + " has " + monthDays + " days.");
-    
+            
+            System.out.println();
             while (true) {
                 try {
                     System.out.print("Please select a day (1-" + monthDays + "): ");
@@ -175,7 +178,7 @@ public class ClientReservation {
                     additionalFee = addPerson * 500;
 
                     System.out.println("You added: " + addPerson + " pax");
-                    System.out.println("Your additioanl fee is: Php" + additionalFee);
+                    System.out.println("Your additional fee is: Php" + additionalFee);
                 }
                 System.out.println();
                 NumberofGuest.add(numofGuest);
@@ -188,7 +191,7 @@ public class ClientReservation {
 
         while (true) {
             try {
-                System.out.print("Number of Faclities to Rerve: ");
+                System.out.print("Number of Faclities to Reserve: ");
                 numofFacilitytoReserve = sc.nextInt();
                 
                 System.out.println();
@@ -214,7 +217,6 @@ public class ClientReservation {
 
                 if (lunchdinner == 'Y') {
                     do {
-                        System.out.println("\nSelect 0 to view Total");
                         System.out.print("Provide Meal Lunch Quantity: ");
                         lunchQuantity = sc.nextInt();
 
@@ -222,7 +224,7 @@ public class ClientReservation {
                         dinnerQuantity = sc.nextInt();
 
                         lunchTotal = lunchQuantity * 250;
-                        dinnerTotal = dinnerQuantity * 250;
+                        dinnerTotal = dinnerQuantity * 350;
 
                         System.out.println("\nSelect 1 to re-enter Lunch quantity");
                         System.out.println("Select 2 to re-enter Dinner quantity");
@@ -424,8 +426,8 @@ public class ClientReservation {
                     System.out.println("║  You selected: LOG-OUT                           ║");
                     System.out.println("║  Are you sure you want to log out?               ║");
                     System.out.println("║                                                  ║");
-                    System.out.println("║  1. Yes, log out                                 ║");
-                    System.out.println("║  2. No, go back                                  ║");
+                    System.out.println("║  > Yes, log out                                  ║");
+                    System.out.println("║  > No, go back                                   ║");
                     System.out.println("╚══════════════════════════════════════════════════╝\n");
                     System.out.print("Enter your choice: ");
                     String logoutchoice = sc.next();
