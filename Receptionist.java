@@ -326,8 +326,8 @@ public class Receptionist{
                 System.out.println("║  You selected: RECEPTIONIST                      ║");
                 System.out.println("║  Do you want to continue?                        ║");
                 System.out.println("║                                                  ║");
-                System.out.println("║  1. Yes, proceed to login                        ║");
-                System.out.println("║  2. No, go back                                  ║");
+                System.out.println("║  > Yes, proceed to login                         ║");
+                System.out.println("║  > No, go back                                   ║");
                 System.out.println("╚══════════════════════════════════════════════════╝\n");
                 System.out.print("Enter your choice: ");
                 String actionchoice = scanner.next();
@@ -431,8 +431,8 @@ public class Receptionist{
                     System.out.println("║  You selected: LOG-OUT                           ║");
                     System.out.println("║  Are you sure you want to log out?               ║");
                     System.out.println("║                                                  ║");
-                    System.out.println("║  1. Yes, log out                                 ║");
-                    System.out.println("║  2. No, go back                                  ║");
+                    System.out.println("║  > Yes, log out                                  ║");
+                    System.out.println("║  > No, go back                                   ║");
                     System.out.println("╚══════════════════════════════════════════════════╝\n");
                     System.out.print("Enter your choice: ");
                     String logoutchoice = scanner.next();
